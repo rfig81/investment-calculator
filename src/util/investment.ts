@@ -1,9 +1,11 @@
-import { CalculatorValues } from "../types";
 // This function expects a JS object as an argument
 // The object should contain the following properties
 // - initialInvestment: The initial investment amount
 // - annualInvestment: The amount invested every year
 // - expectedReturn: The expected (annual) rate of return
+
+import { CalculatorValues } from "../types";
+
 // - duration: The investment duration (time frame)
 export function calculateInvestmentResults({
   initialInvestment,
@@ -13,22 +15,15 @@ export function calculateInvestmentResults({
 }: CalculatorValues) {
   const annualData = [];
   let investmentValue = initialInvestment;
-  let investedCapital = initialInvestment;
 
   for (let i = 0; i < duration; i++) {
-    const interestEarnedInYear = investmentValue * (expectedReturn / 100);
-    const totalInterest: number =
-      i === 0
-        ? interestEarnedInYear
-        : annualData[i - 1].totalInterest + interestEarnedInYear;
+    const interestEarnedInYear = investmentValue * (+expectedReturn / 100);
     investmentValue += interestEarnedInYear + annualInvestment;
-    investedCapital += annualInvestment;
     annualData.push({
       year: i + 1, // year identifier
-      investmentValue: investmentValue, // investment value at the end of year
       interest: interestEarnedInYear, // the amount of interest earned in this year
-      totalInterest, // the amount of interest earned in year + the amount accumulated from years before
-      investedCapital, // the accumulated amount invested each year
+      valueEndOfYear: investmentValue, // investment value at end of year
+      annualInvestment: annualInvestment, // investment added in this year
     });
   }
 

@@ -1,12 +1,10 @@
 import { CalculatorValues } from "../types";
 import { calculateInvestmentResults, formatter } from "../util/investment";
 
-const Results = ({
-  calculatorValues,
-}: {
-  calculatorValues: CalculatorValues;
-}) => {
-  const results = calculateInvestmentResults(calculatorValues);
+const Results = ({ values }: { values: CalculatorValues }) => {
+  const initialInvestment = values.initialInvestment;
+  const results = calculateInvestmentResults(values);
+
   return (
     <table id="result">
       <thead>
@@ -20,18 +18,20 @@ const Results = ({
       </thead>
       <tbody>
         {results.map(
-          (
-            { year, investmentValue, interest, totalInterest, investedCapital },
-            i
-          ) => (
-            <tr key={i}>
-              <td>{year}</td>
-              <td>{formatter.format(investmentValue)}</td>
-              <td>{formatter.format(interest)}</td>
-              <td>{formatter.format(totalInterest)}</td>
-              <td>{formatter.format(investedCapital)}</td>
-            </tr>
-          )
+          ({ year, interest, valueEndOfYear, annualInvestment }, i) => {
+            const totalInterest =
+              valueEndOfYear - annualInvestment * year - initialInvestment;
+            const totalAmountInvested = valueEndOfYear - totalInterest;
+            return (
+              <tr key={i}>
+                <td>{year}</td>
+                <td>{formatter.format(valueEndOfYear)}</td>
+                <td>{formatter.format(interest)}</td>
+                <td>{formatter.format(totalInterest)}</td>
+                <td>{formatter.format(totalAmountInvested)}</td>
+              </tr>
+            );
+          }
         )}
       </tbody>
     </table>

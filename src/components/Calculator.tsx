@@ -1,75 +1,80 @@
-import { useState } from "react";
+const preventInvalidKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  // Allow Backspace, Delete, Arrow Keys, and Tab
+  if (
+    ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(
+      event.key
+    )
+  )
+    return;
+
+  // Prevent non-numeric characters
+  if (!/^\d$/.test(event.key)) event.preventDefault();
+
+  // Prevent zero when input is empty
+  if (!event.currentTarget.value && event.key === "0") event.preventDefault();
+};
 
 const Calculator = ({
-  onInputChange,
+  values,
+  onChange,
 }: {
-  onInputChange: (inputValue: { [key: string]: number }) => void;
+  values: {
+    initialInvestment: string;
+    annualInvestment: string;
+    expectedReturn: string;
+    duration: string;
+  };
+  onChange: (inputIdentifier: string, newValue: string) => void;
 }) => {
-  const [initialInvestment, setInitialInvestment] = useState("");
-  const [annualInvestment, setAnnualInvestment] = useState("");
-  const [expectedReturn, setExpectedReturn] = useState("");
-  const [duration, setDuration] = useState("");
-
-  const handleInitialInvestmentChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setInitialInvestment(event.target.value);
-    onInputChange({ initialInvestment: Number(event.target.value) });
-  };
-  const handleAnnualInvestmentChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setAnnualInvestment(event.target.value);
-    onInputChange({ annualInvestment: Number(event.target.value) });
-  };
-  const handleExpectedReturnChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setExpectedReturn(event.target.value);
-    onInputChange({ expectedReturn: Number(event.target.value) });
-  };
-  const handleDurationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDuration(event.target.value);
-    onInputChange({ duration: Number(event.target.value) });
-  };
+  const { initialInvestment, annualInvestment, expectedReturn, duration } =
+    values;
 
   return (
     <section id="user-input">
       <div className="input-group">
-        <label>
-          Initial Investment
+        <div>
+          <label>Initial Investment</label>
           <input
             type="number"
             value={initialInvestment}
-            onChange={handleInitialInvestmentChange}
+            onChange={(event) =>
+              onChange("initialInvestment", event.target.value)
+            }
+            onKeyDown={(event) => preventInvalidKeys(event)}
           />
-        </label>
-        <label>
-          Annual Investment
+        </div>
+        <div>
+          <label>Annual Investment</label>
           <input
             type="number"
             value={annualInvestment}
-            onChange={handleAnnualInvestmentChange}
+            onChange={(event) =>
+              onChange("annualInvestment", event.target.value)
+            }
+            onKeyDown={(event) => preventInvalidKeys(event)}
           />
-        </label>
+        </div>
       </div>
       <div className="input-group">
-        <label>
-          Expected Return
+        <div>
+          <label>Expected Return</label>
           <input
             type="number"
             value={expectedReturn}
-            onChange={handleExpectedReturnChange}
+            onChange={(event) => onChange("expectedReturn", event.target.value)}
+            onKeyDown={(event) => preventInvalidKeys(event)}
           />
-        </label>
-        <label>
-          Duration
+        </div>
+        <div>
+          <label>Duration</label>
           <input
             type="number"
             value={duration}
-            onChange={handleDurationChange}
+            onChange={(event) => onChange("duration", event.target.value)}
+            onKeyDown={(event) => preventInvalidKeys(event)}
+            onKeyUp={(event) => event.preventDefault()}
           />
-        </label>
+        </div>
       </div>
     </section>
   );
